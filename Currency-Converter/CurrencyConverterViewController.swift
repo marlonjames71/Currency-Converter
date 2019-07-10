@@ -67,12 +67,14 @@ class CurrencyConverterViewController: UIViewController {
 		CADButton.isSelected = true
 		MXNButton.isSelected = false
 		toCurrencyLabel.text = CurrencyType.cad.rawValue
+		convertButtonTapped(sender)
 	}
 	
 	@IBAction func MXNButtonSelected(_ sender: UIButton) {
 		MXNButton.isSelected = true
 		CADButton.isSelected = false
 		toCurrencyLabel.text = CurrencyType.mxn.rawValue
+		convertButtonTapped(sender)
 	}
 	
 
