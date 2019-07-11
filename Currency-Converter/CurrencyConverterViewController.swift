@@ -34,7 +34,7 @@ class CurrencyConverterViewController: UIViewController {
 		toCurrencyLabel.text = CurrencyType.cad.rawValue
 		layer.frame = view.bounds
 		layer.colors = [UIColor.yellow.cgColor, UIColor.green.cgColor]
-		self.view.layer.insertSublayer(layer, at: 0)
+		view.layer.insertSublayer(layer, at: 0)
 		convertButton.layer.cornerRadius = 20
 		usdCurrencyTextField.textColor = .white
 		otherCurrencyTextField.textColor = .white
@@ -46,6 +46,7 @@ class CurrencyConverterViewController: UIViewController {
 		toolbar.setItems([flexSpace, doneBtn], animated: false)
 		toolbar.sizeToFit()
 		self.usdCurrencyTextField.inputAccessoryView = toolbar
+		usdCurrencyTextField.addTarget(self, action: #selector(usdCurrencyEdited(_:)), for: .editingChanged)
 	}
 
 	@objc func doneButtonAction() {
@@ -54,13 +55,24 @@ class CurrencyConverterViewController: UIViewController {
 	
 	// MARK: - Actions
 	@IBAction func convertButtonTapped(_ sender: UIButton) {
+		let validCharacters = Set("1234567890")
 		guard let currencyStr = usdCurrencyTextField.text,
-			let usdCurrency = Double(currencyStr) else { return }
+			let usdCurrency = Double(currencyStr.filter{ validCharacters.contains($0) }) else { return }
 		if CADButton.isSelected == true {
-			otherCurrencyTextField.text = currencyFormatter.string(from: (NSNumber(value: convert(dollars: usdCurrency, to: .cad))))
+			otherCurrencyTextField.text = currencyFormatter.string(from: (NSNumber(value: convert(dollars: usdCurrency, to: .cad) / 100)))
 		} else {
-			otherCurrencyTextField.text = currencyFormatter.string(from: (NSNumber(value: convert(dollars: usdCurrency, to: .mxn))))
+			otherCurrencyTextField.text = currencyFormatter.string(from: (NSNumber(value: convert(dollars: usdCurrency, to: .mxn) / 100)))
 		}
+	}
+	
+	@IBAction func usdCurrencyEdited(_ sender: UITextField) {
+		guard let usdCurrencyStr = sender.text else { return }
+		print(sender.text!)
+		let validCharacters = Set("1234567890")
+		let sanitizedStr = usdCurrencyStr.filter { validCharacters.contains($0) }
+		print(sanitizedStr)
+		guard let value = Double(sanitizedStr) else { return }
+		usdCurrencyTextField.text = currencyFormatter.string(from: NSNumber(value: value / 100))
 	}
 	
 	@IBAction func CADButtonSelected(_ sender: UIButton) {
@@ -102,5 +114,10 @@ class CurrencyConverterViewController: UIViewController {
 		}
 		return product
 	}
+	
 }
 
+
+//extension String {
+//	func
+//}
